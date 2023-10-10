@@ -11,5 +11,9 @@ router.post('/', (req, res, next) => {
     itemController.createItem(req, res, next)
 });
 
+router.get('/item-search', (req, res, next) => {
+    itemController.searchItem(req, res, next)
+});
+
 
 module.exports = router;
