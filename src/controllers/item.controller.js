@@ -36,7 +36,11 @@ const searchItem = async (req, res, next) => {
             res.status(200).json([]); // return empty array
         }
         else{
-            const { rows } = await db.query('select category_id, brand_id, item_name, total_quantity, barcode, status from item_master where status = $1 and lower(item_name) like $2', [req.query.status || 1, `${req.query.search.toLowerCase()}%`]);
+            const  q = `select item_id, i.category_id, i.brand_id, item_name, category_name , b.name as brand_name, total_quantity, barcode, i.status
+            from item_master i,
+            brand_master b,
+            category_master c where i.category_id = c.category_id and i.brand_id = b.brand_id and i.status = $1 and lower(i.item_name) like $2`
+            const { rows } = await db.query(q, [req.query.status || 1, `${req.query.search.toLowerCase()}%`]);
             res.status(200).json(rows);
         }
     } catch (e) {

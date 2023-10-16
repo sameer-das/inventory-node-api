@@ -6,6 +6,7 @@ const userRoutes = require('./routes/user.routes');
 const brandRoutes = require('./routes/brand.routes');
 const categoryRoutes = require('./routes/category.routes');
 const itemRoutes = require('./routes/item.routes');
+const purchaseRoutes = require('./routes/purchase.routes');
 
 const app = express();
 const PREFIX = '/api/v1';
@@ -20,5 +21,6 @@ app.use(PREFIX + '/users', userRoutes);
 app.use(PREFIX + '/brands', brandRoutes);
 app.use(PREFIX + '/category', categoryRoutes);
 app.use(PREFIX + '/item', itemRoutes);
+app.use(PREFIX + '/purchase', purchaseRoutes);
 
 module.exports = app; 

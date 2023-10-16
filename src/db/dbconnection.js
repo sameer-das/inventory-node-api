@@ -8,4 +8,8 @@ const query = (text, params, callback) => {
     return pool.query(text, params, callback)
 }
 
-module.exports = {query};
+const getClient = async () => {
+    return await pool.connect();
+}
+
+module.exports = {query, getClient};
