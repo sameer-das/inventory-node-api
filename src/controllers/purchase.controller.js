@@ -1,16 +1,20 @@
 
 const db = require('../db/dbconnection');
 const format = require('pg-format');
+const { v4: uuidv4 } = require('uuid');
 
 const addPurchase = async (purchasePayload) => {
     const client = await db.getClient();
     let result;
+    const uid = uuidv4();
+    console.log(uid);
+    console.log(purchasePayload);
     try {
         // insert to the purchase_master table
         const values = [];
         purchasePayload.forEach(current => {
             values.push([
-                current.purchase_date, current.biller_name, current.biller_gstn,
+                current.purchase_date,uid, current.biller_name, current.biller_gstn,
                 current.item_id, current.category_id, current.brand_id,
                 current.item_name, current.category_name, current.brand_name,
                 current.barcode, current.mrp,
@@ -19,7 +23,7 @@ const addPurchase = async (purchasePayload) => {
                 current.gst, current.totalQuantityPiece, current.taxAmount, current.totalPrice, current.purchasePricePerPiece
             ])
         });
-        const _query1 = `insert into purchase_master (purchase_date, biller_name, biller_gstn,
+        const _query1 = `insert into purchase_master (purchase_date, uid, biller_name, biller_gstn,
         item_id, category_id, brand_id,
         item_name, category_name, brand_name,
         barcode, mrp,
@@ -28,7 +32,7 @@ const addPurchase = async (purchasePayload) => {
         gst, total_quantity_piece, tax_amount, total_price, purchase_price_per_piece) values %L returning purchase_id`;
 
         const query1 = format(_query1, values);
-        // console.log(query);
+        console.log(query1);
 
         await client.query('BEGIN');
 
@@ -39,23 +43,24 @@ const addPurchase = async (purchasePayload) => {
 
         // insert to the stock_master table
 
-        const _query2 = `insert into stock_master (purchase_id, item_id , category_id, brand_id,
+        const _query2 = `insert into stock_master (purchase_id, uid, item_id , category_id, brand_id,
             item_name, category_name, brand_name, barcode, mrp, total_quantity_piece,
             piece_per_carton, purchase_price_per_piece) 
-            select purchase_id, item_id, category_id, brand_id, item_name,
+            select purchase_id, uid, item_id, category_id, brand_id, item_name,
             category_name, brand_name, barcode, mrp, total_quantity_piece, piece_per_carton, purchase_price_per_piece  
-            from purchase_master where purchase_master.purchase_id in (%L)`
-        const query2 = format(_query2, purchase_ids);
-        // console.log(query2);
+            from purchase_master where purchase_master.uid = '%s'`
+        const query2 = format(_query2, uid);
+        console.log(query2);
         const stockMasterResp = await client.query(query2);
         // console.log(stockMasterResp);
 
         // increase the qty in item_master table 
 
         const _query3 = `UPDATE item_master SET total_quantity = total_quantity + purchase_master.total_quantity_piece
-        FROM purchase_master WHERE item_master.item_id = purchase_master.item_id AND purchase_master.purchase_id in (%L)`
+        FROM purchase_master WHERE item_master.item_id = purchase_master.item_id AND purchase_master.uid = '%s'`
 
-        const query3 = format(_query3, purchase_ids);
+        const query3 = format(_query3, uid);
+        console.log(query3)
         const itemMasterResp = await client.query(query3);
 
         await client.query('COMMIT');
