@@ -1,0 +1,92 @@
+postgres://sameer-das:31CEBKguldic@ep-wispy-morning-51772731.ap-southeast-1.aws.neon.tech/neondb
+
+
+create table user_master (
+  user_id serial primary key,
+  name varchar(100),
+  status int,
+  password varchar(20),
+  phone varchar(10)
+)
+
+insert into user_master (name,user_name,password,phone) values ('Administrator','admin','admin','9658646979')
+
+create table brand_master (
+  brand_id serial primary key,
+  name varchar(100),
+  status int,
+  createdon timestamp,
+  modifiedon timestamp
+)
+
+create table category_master (
+  category_id serial primary key,
+  category_name varchar(100),
+  status int,
+  createdon timestamp,
+  modifiedon timestamp
+)
+
+create table item_master (
+  item_id serial primary key,
+  category_id int,
+  brand_id int,
+  item_name varchar(100),
+  total_quantity int,
+  barcode varchar(50),
+  status int,
+  
+  createdon timestamp,
+  modifiedon timestamp
+)
+
+create table purchase_master (
+purchase_id serial primary key,
+uid varchar(50),
+purchase_date timestamp,
+biller_name varchar(100),
+biller_gstn varchar(50),
+item_id int,
+category_id int,
+brand_id int,
+item_name varchar(100),
+category_name varchar(100),
+brand_name  varchar(100),
+barcode varchar(50),
+mrp NUMERIC(10,2),
+quantity_box int,
+piece_per_carton int,
+quantity_piece int,
+quantity_free int,
+purchase_price_before_discount NUMERIC(10,2),
+discount_price NUMERIC(10,2),
+purchase_price_after_discount NUMERIC(10,2),
+gst int,
+total_quantity_piece int,
+tax_amount NUMERIC(10,2),
+total_price NUMERIC(10,2),
+purchase_price_per_piece NUMERIC(10,2),
+created_on timestamp without time zone default now()
+)
+
+
+create table stock_master (
+stock_id serial primary key,
+purchase_id int,
+uid varchar(50),
+item_id int,
+category_id int,
+brand_id int,
+item_name varchar(100),
+category_name varchar(100),
+brand_name  varchar(100),
+barcode varchar(50),
+mrp NUMERIC(10,2),
+total_quantity_piece int,
+piece_per_carton int,
+purchase_price_per_piece NUMERIC(10,2),
+created_on timestamp without time zone default now()
+)
+
+
+

@@ -65,9 +65,9 @@ const searchItemWithStock = async (req,res,next) => {
             INNER JOIN stock_master ON item_master.item_id = stock_master.item_id
             INNER JOIN  purchase_master ON stock_master.item_id = purchase_master.item_id 
             AND stock_master.uid = purchase_master.uid           
-            WHERE item_master.item_id = 7 AND item_master.status=1 AND stock_master.total_quantity_piece > 0 AND lower(item_master.item_name) like $1`;
+            WHERE item_master.status = $1 AND stock_master.total_quantity_piece > 0 AND lower(item_master.item_name) like $2`;
 
-            const { rows } = await db.query(q, [`${req.query.search.toLowerCase()}%`]);
+            const { rows } = await db.query(q, [req.query.status || 1,`${req.query.search.toLowerCase()}%`]);
             res.status(200).json(rows);
         }
     } catch (e) {
