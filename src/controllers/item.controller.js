@@ -70,7 +70,7 @@ const searchItemWithStock = async (req, res, next) => {
             INNER JOIN stock_master ON item_master.item_id = stock_master.item_id
             INNER JOIN  purchase_master ON stock_master.item_id = purchase_master.item_id 
             AND stock_master.uid = purchase_master.uid           
-            WHERE item_master.status = $1 AND stock_master.total_quantity_piece > 0 AND lower(item_master.item_name) like $2`;
+            WHERE item_master.status = $1 AND stock_master.total_quantity_piece >= 0 AND lower(item_master.item_name) like $2`;
 
             const { rows } = await db.query(q, [req.query.status || 1, `%${req.query.search.toLowerCase()}%`]);
             res.status(200).json(rows);
@@ -83,9 +83,13 @@ const searchItemWithStock = async (req, res, next) => {
 
 const itemStockDetails = async (req, res, next) => {
     try {
-        const _query = `select stock_id,purchase_id, uid as purchase_uid,item_id, category_id, category_id,
-        item_name, category_name,brand_name, barcode, mrp, total_quantity_piece, 
-        piece_per_carton, purchase_price_per_piece,created_on from stock_master  where item_id = %s`;
+        const _query = `select stock_id,stock_master.purchase_id, stock_master.uid as purchase_uid,
+                stock_master.item_id, stock_master.category_id,stock_master.category_id,
+                stock_master.item_name, stock_master.category_name,stock_master.brand_name, stock_master.barcode, stock_master.mrp, stock_master.total_quantity_piece, 
+                stock_master.piece_per_carton, stock_master.purchase_price_per_piece,stock_master.created_on,purchase_date from stock_master
+                inner join purchase_master on stock_master.item_id = purchase_master.item_id
+                and stock_master.purchase_id = purchase_master.purchase_id
+                where stock_master.item_id = %s`;
         const query = format(_query, [req.query.itemId]);
         // console.log(query);
         const { rows } = await db.query(query);

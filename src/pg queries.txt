@@ -165,6 +165,37 @@ create table sale_details (
 )
 
 
+create table purchase_bill_details (
+  sl_id serial primary key,
+  purchase_uid varchar(50),
+    purchase_date timestamp,
+   biller_name varchar(100),
+   biller_phone varchar(12),
+    biller_gstn varchar(50),
+   total_price NUMERIC(10,2),
+    created_on timestamp without time zone default now()
+)
+
+
+create table biller_master(
+  biller_id serial primary key,
+  biller_name varchar(100),
+  biller_phone varchar(12),
+  biller_gstn varchar(50),
+  status int default 1,
+  created_on timestamp without time zone default now()
+)
+
+create table customer_master(
+  customer_id serial primary key,
+  customer_name varchar(100),
+  customer_phone varchar(15),
+  customer_gstn varchar(30),
+  status int default 1,
+  created_on timestamp without time zone default now()
+)
+
+
 truncate table purchase_master;
 truncate table stock_master;
 truncate table sale_bill_details;

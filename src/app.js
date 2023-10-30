@@ -9,15 +9,17 @@ const categoryRoutes = require('./routes/category.routes');
 const itemRoutes = require('./routes/item.routes');
 const purchaseRoutes = require('./routes/purchase.routes');
 const saleRoutes = require('./routes/sale.routes')
+const relationsRoutes = require('./routes/relations.router')
 
 const app = express();
 const PREFIX = '/api/v1';
 
 // ------ COMMON MIDDLEWARES ------
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, 'public'),{ redirect: false }));
+// send static files from src/public folder  
+app.use(express.static(path.join(__dirname, 'public'), { redirect: false }));
 
 // ------ API ROUTES ------
 app.use(PREFIX + '/users', userRoutes);
@@ -26,10 +28,11 @@ app.use(PREFIX + '/category', categoryRoutes);
 app.use(PREFIX + '/item', itemRoutes);
 app.use(PREFIX + '/purchase', purchaseRoutes);
 app.use(PREFIX + '/sale', saleRoutes);
+app.use(PREFIX + '/relations', relationsRoutes);
 
-
-app.get('*', (req,res) => {
-    res.sendFile(path.join(__dirname,'/public/index.html'));
+// anything else should be routed to angular
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public/index.html'));
 })
 
 module.exports = app; 
