@@ -16,5 +16,9 @@ router.get('/customer', async (req, res, next) => {
     await relationsController.getCustomer(req, res, next);
 });
 
+router.get('/search', async (req, res, next) => {
+    await relationsController.searchRelation(req, res, next);
+});
+
 
 module.exports = router;

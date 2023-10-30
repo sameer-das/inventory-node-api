@@ -62,11 +62,35 @@ const getCustomer = async (req, res, next) => {
     }
 }
 
+const searchRelation = async (req, res, next) => {
+    const { type, searchValue } = req.query;
+    let query;
+    if (type === 'biller') {
+        query = `select biller_name,biller_phone,biller_gstn from biller_master where status = 1 and lower(biller_name) like $1`;
+    } else if (type === 'customer') {
+        query = `select customer_name,customer_phone,customer_gstn from customer_master where status = 1 and lower(customer_name) like $1`
+    }
+
+    try {
+        if (searchValue === '') {
+            res.status(200).json([]);
+        } else {
+            const { rows } = await db.query(query, [`%${searchValue.toLowerCase()}%`]);
+            res.status(200).json(rows);
+        }
+
+    } catch (e) {
+        res.status(500).json({ status: 500, message: e.message, result: null })
+    }
+
+}
+
 
 
 module.exports = {
     addCustomer,
     addBiller,
     getBiller,
-    getCustomer
+    getCustomer,
+    searchRelation
 }
