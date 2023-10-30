@@ -41,52 +41,133 @@ create table item_master (
 )
 
 create table purchase_master (
-purchase_id serial primary key,
-uid varchar(50),
-purchase_date timestamp,
-biller_name varchar(100),
-biller_gstn varchar(50),
-item_id int,
-category_id int,
-brand_id int,
-item_name varchar(100),
-category_name varchar(100),
-brand_name  varchar(100),
-barcode varchar(50),
-mrp NUMERIC(10,2),
-quantity_box int,
-piece_per_carton int,
-quantity_piece int,
-quantity_free int,
-purchase_price_before_discount NUMERIC(10,2),
-discount_price NUMERIC(10,2),
-purchase_price_after_discount NUMERIC(10,2),
-gst int,
-total_quantity_piece int,
-tax_amount NUMERIC(10,2),
-total_price NUMERIC(10,2),
-purchase_price_per_piece NUMERIC(10,2),
-created_on timestamp without time zone default now()
+  purchase_id serial primary key,
+  uid varchar(50),
+  purchase_date timestamp,
+  biller_name varchar(100),
+  biller_gstn varchar(50),
+  item_id int,
+  category_id int,
+  brand_id int,
+  item_name varchar(100),
+  category_name varchar(100),
+  brand_name  varchar(100),
+  barcode varchar(50),
+  mrp NUMERIC(10,2),
+  quantity_box int,
+  piece_per_carton int,
+  quantity_piece int,
+  quantity_free int,
+  purchase_price_before_discount NUMERIC(10,2),
+  discount_price NUMERIC(10,2),
+  purchase_price_after_discount NUMERIC(10,2),
+  gst int,
+  total_quantity_piece int,
+  tax_amount NUMERIC(10,2),
+  total_price NUMERIC(10,2),
+  purchase_price_per_piece NUMERIC(10,2),
+  created_on timestamp without time zone default now()
 )
 
 
 create table stock_master (
-stock_id serial primary key,
-purchase_id int,
-uid varchar(50),
-item_id int,
-category_id int,
-brand_id int,
-item_name varchar(100),
-category_name varchar(100),
-brand_name  varchar(100),
-barcode varchar(50),
-mrp NUMERIC(10,2),
-total_quantity_piece int,
-piece_per_carton int,
-purchase_price_per_piece NUMERIC(10,2),
-created_on timestamp without time zone default now()
+  stock_id serial primary key,
+  purchase_id int,
+  uid varchar(50),
+  item_id int,
+  category_id int,
+  brand_id int,
+  item_name varchar(100),
+  category_name varchar(100),
+  brand_name  varchar(100),
+  barcode varchar(50),
+  mrp NUMERIC(10,2),
+  total_quantity_piece int,
+  piece_per_carton int,
+  purchase_price_per_piece NUMERIC(10,2),
+  created_on timestamp without time zone default now()
+)
+
+create table sale_bill_details (
+  sl_id serial primary key,
+  bill_no varchar(15),
+  sale_uid varchar(50),
+  sale_date timestamp without time zone,
+  sale_customer varchar(100),
+  sale_customer_phone varchar(15),
+  sale_gstn varchar(30),
+  total_amount NUMERIC(10,2),
+  status int default 1,
+  created_on timestamp without time zone default now()
 )
 
 
 
+create table sale_master (
+  sale_id serial primary key,
+  bill_no varchar(15),
+  sale_uid varchar(50),
+  sale_details_uid varchar(50),
+  item_id int,
+  brand_id int,
+  category_id int,
+  item_name varchar(100),
+  category_name varchar(100),
+  brand_name varchar(100),
+  
+  sale_box_quantity int,
+  sale_piece_quantity int,
+  sale_free_quantity int,
+  sale_total_piece int,
+  average_sale_price NUMERIC(10,2),
+  
+  sale_discount NUMERIC(10,2),
+  total_amount NUMERIC(10,2),
+
+  gst_earned NUMERIC(10,2),
+  profit_earned NUMERIC(10,2),
+  sale_date timestamp without time zone,
+  created_on timestamp without time zone default now()
+)
+
+
+
+
+
+create table sale_details (
+  sl_id serial primary key,
+  sale_uid varchar(50),
+  sale_details_uid varchar(50),
+  item_id int,
+  purchase_id int,
+  purchase_uid varchar(50),
+  
+  sale_box_quantity int,
+  piece_per_box int,
+  sale_piece_quantity int,
+  sale_free_quantity int,
+  sale_total_piece_quantity int,
+  
+  purchase_price_per_box NUMERIC(10,2),
+  purchase_price_per_piece NUMERIC(10,2),
+  gst_rate int, 
+  mrp NUMERIC(10,2),
+  
+  average_sale_price_per_piece NUMERIC(10,2),
+  sale_price_per_box NUMERIC(10,2),
+  sale_price_per_piece NUMERIC(10,2),
+  sale_total_price NUMERIC(10,2),
+  sale_discount_price NUMERIC(10,2),
+  
+  gst_earned NUMERIC(10,2),
+  profit_earned NUMERIC(10,2),
+  created_on timestamp without time zone default now()
+)
+
+
+truncate table purchase_master;
+truncate table stock_master;
+truncate table sale_bill_details;
+truncate table sale_master;
+truncate table sale_details;
+update item_master set total_quantity = 0;

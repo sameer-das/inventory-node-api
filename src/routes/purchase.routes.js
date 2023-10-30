@@ -9,6 +9,14 @@ router.post('/', async (req, res, next) => {
     res.status(resp.status).json(resp);
 });
 
+router.get('/', async (req, res, next) => {
+    await purchaseController.getAllPurchases(req,res,next);
+});
+
+router.get('/details', async (req, res, next) => {
+    await purchaseController.getPurchaseDetails(req,res,next);
+});
+
 
 
 module.exports = router;
