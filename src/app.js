@@ -10,6 +10,8 @@ const itemRoutes = require('./routes/item.routes');
 const purchaseRoutes = require('./routes/purchase.routes');
 const saleRoutes = require('./routes/sale.routes')
 const relationsRoutes = require('./routes/relations.router')
+const authRoutes = require('./routes/auth.router');
+const { verifyToken } = require('./controllers/auth.controller');
 
 const app = express();
 const PREFIX = '/api/v1';
@@ -21,14 +23,19 @@ app.use(express.json());
 // send static files from src/public folder  
 app.use(express.static(path.join(__dirname, 'public'), { redirect: false }));
 
-// ------ API ROUTES ------
-app.use(PREFIX + '/users', userRoutes);
-app.use(PREFIX + '/brands', brandRoutes);
-app.use(PREFIX + '/category', categoryRoutes);
-app.use(PREFIX + '/item', itemRoutes);
-app.use(PREFIX + '/purchase', purchaseRoutes);
-app.use(PREFIX + '/sale', saleRoutes);
-app.use(PREFIX + '/relations', relationsRoutes);
+// ------ LOGIN ROUTE --------
+app.use(PREFIX + '/authenticate', authRoutes);
+
+
+// ------ API ROUTES, NEEDS AUTHENTIATION ------
+app.use(PREFIX + '/users', verifyToken, userRoutes);
+app.use(PREFIX + '/brands', verifyToken, brandRoutes);
+app.use(PREFIX + '/category', verifyToken, categoryRoutes);
+app.use(PREFIX + '/item', verifyToken, itemRoutes);
+app.use(PREFIX + '/purchase', verifyToken, purchaseRoutes);
+app.use(PREFIX + '/sale', verifyToken, saleRoutes);
+app.use(PREFIX + '/relations', verifyToken, relationsRoutes);
+
 
 // anything else should be routed to angular
 app.get('*', (req, res) => {
