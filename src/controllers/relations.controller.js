@@ -66,16 +66,16 @@ const searchRelation = async (req, res, next) => {
     const { type, searchValue } = req.query;
     let query;
     if (type === 'biller') {
-        query = `select biller_name,biller_phone,biller_gstn from biller_master where status = 1 and lower(biller_name) like $1`;
+        query = `select biller_name,biller_phone,biller_gstn from biller_master where status = 1 and (lower(biller_name) like $1 OR biller_phone like $2)`;
     } else if (type === 'customer') {
-        query = `select customer_name,customer_phone,customer_gstn from customer_master where status = 1 and lower(customer_name) like $1`
+        query = `select customer_name,customer_phone,customer_gstn from customer_master where status = 1 and (lower(customer_name) like $1 OR customer_phone like $2)`
     }
 
     try {
         if (searchValue === '') {
             res.status(200).json([]);
         } else {
-            const { rows } = await db.query(query, [`%${searchValue.toLowerCase()}%`]);
+            const { rows } = await db.query(query, [`%${searchValue.toLowerCase()}%`, `%${searchValue}%`]);
             res.status(200).json(rows);
         }
 
