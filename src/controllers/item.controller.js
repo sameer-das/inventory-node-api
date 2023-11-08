@@ -20,6 +20,24 @@ const getAllItems = async (req, res, next) => {
     }
 }
 
+const getAllItemsOfABrand = async (req, res, next) => {
+    try {
+        const _query = `select item_master.category_id, item_master.brand_id,item_master.item_id,
+                item_name,category_name,brand_master.name as brand_name, total_quantity, barcode from item_master
+                inner join category_master on item_master.category_id = category_master.category_id
+                inner join brand_master on item_master.brand_id = brand_master.brand_id
+                where item_master.status = 1 and item_master.brand_id = $1 `
+        const { rows } = await db.query(_query, [req.query.brandId]);
+        res.status(200).json({
+            status: 200,
+            result: rows,
+            message: null
+        });
+    } catch (e) {
+        res.status(500).json({ status: 500, message: e.message, result: null })
+    }
+}
+
 
 const createItem = async (req, res, next) => {
     try {
@@ -99,10 +117,30 @@ const itemStockDetails = async (req, res, next) => {
     }
 }
 
+const getStockWorthBrandWise = async (req, res, next) => {
+    const _query = `select brand_master.name as brand_name,brand_master.brand_id,
+            case when temp.total_stock is null then 0 else temp.total_stock end 
+            from brand_master left join (select  stock_master.brand_id, stock_master.brand_name, 
+            sum(stock_master.total_quantity_piece * stock_master.purchase_price_per_piece) as total_stock
+            from stock_master
+            inner join purchase_master on stock_master.item_id = purchase_master.item_id
+            and stock_master.purchase_id = purchase_master.purchase_id 
+            group by stock_master.brand_name, stock_master.brand_id) temp
+            on brand_master.brand_id = temp.brand_id order by brand_master.name`;
+    try {
+        const { rows } = await db.query(_query);
+        res.status(200).json({ status: 200, message: null, result: rows });
+    } catch (e) {
+        res.status(500).json({ status: 500, message: e.message, result: null });
+    }
+}
+
 module.exports = {
     getAllItems,
     createItem,
     searchItem,
     searchItemWithStock,
-    itemStockDetails
+    itemStockDetails,
+    getStockWorthBrandWise,
+    getAllItemsOfABrand
 }

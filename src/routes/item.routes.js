@@ -20,6 +20,12 @@ router.get('/item-search-stock', (req, res, next) => {
 router.get('/item-stock-details', (req, res, next) => {
     itemController.itemStockDetails(req, res, next)
 });
+router.get('/stocks/all-brand', (req, res, next) => {
+    itemController.getStockWorthBrandWise(req, res, next)
+});
+router.get('/by-brand', (req, res, next) => {
+    itemController.getAllItemsOfABrand(req, res, next)
+});
 
 
 module.exports = router;
