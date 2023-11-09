@@ -26,7 +26,7 @@ const getAllItemsOfABrand = async (req, res, next) => {
                 item_name,category_name,brand_master.name as brand_name, total_quantity, barcode from item_master
                 inner join category_master on item_master.category_id = category_master.category_id
                 inner join brand_master on item_master.brand_id = brand_master.brand_id
-                where item_master.status = 1 and item_master.brand_id = $1 `
+                where item_master.status = 1 and item_master.brand_id = $1 order by item_name`
         const { rows } = await db.query(_query, [req.query.brandId]);
         res.status(200).json({
             status: 200,
