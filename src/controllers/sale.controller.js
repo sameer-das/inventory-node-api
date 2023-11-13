@@ -240,7 +240,7 @@ const getNextBillNumber = async (req, res, next) => {
 
 const getSales = async (req, res, next) => {
     const query = `SELECT bill_no, sale_uid,sale_date,sale_customer,sale_customer_phone, 
-    sale_gstn,sale_customer, total_amount FROM sale_bill_details WHERE status = 1`;
+    sale_gstn,sale_customer, total_amount FROM sale_bill_details WHERE status = 1 order by created_on desc`;
     try {
         const { rows } = await db.query(query);
         res.status(200).json({

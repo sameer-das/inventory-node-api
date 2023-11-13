@@ -10,7 +10,7 @@ const authenticate = async (req, res, next) => {
         if (rows.length === 0) {
             res.status(404).json({ status: 404, message: `Invalid credentials!`, result: null })
         } else {
-            jwt.sign(rows[0], SECRET_KEY, { expiresIn: '1h' }, (err, token) => {
+            jwt.sign(rows[0], SECRET_KEY, { expiresIn: '168h' }, (err, token) => {
                 if(err) {
                     console.log(err.message)
                     res.status(500).json({ status: 500, message: `Error while creating authentication token.`, result: token })

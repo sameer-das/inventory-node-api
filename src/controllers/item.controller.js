@@ -22,11 +22,20 @@ const getAllItems = async (req, res, next) => {
 
 const getAllItemsOfABrand = async (req, res, next) => {
     try {
-        const _query = `select item_master.category_id, item_master.brand_id,item_master.item_id,
-                item_name,category_name,brand_master.name as brand_name, total_quantity, barcode from item_master
-                inner join category_master on item_master.category_id = category_master.category_id
-                inner join brand_master on item_master.brand_id = brand_master.brand_id
-                where item_master.status = 1 and item_master.brand_id = $1 order by item_name`
+        // const _query = `select item_master.category_id, item_master.brand_id,item_master.item_id,
+        //         item_name,category_name,brand_master.name as brand_name, total_quantity, barcode from item_master
+        //         inner join category_master on item_master.category_id = category_master.category_id
+        //         inner join brand_master on item_master.brand_id = brand_master.brand_id
+        //         where item_master.status = 1 and item_master.brand_id = $1 order by item_name`
+
+        const _query = `select stock_master.item_id,stock_master.item_name,stock_master.category_name,stock_master.brand_name,mrp,
+                total_quantity_piece / piece_per_carton as box, piece_per_carton,  
+                total_quantity_piece - ((total_quantity_piece / piece_per_carton) * piece_per_carton) as loose_piece,
+                total_quantity_piece
+                from stock_master inner join item_master on item_master.item_id = stock_master.item_id and 
+                item_master.brand_id = stock_master.brand_id
+                where item_master.status = 1 and  item_master.brand_id = $1 order by item_name`;
+        // console.log(_query)
         const { rows } = await db.query(_query, [req.query.brandId]);
         res.status(200).json({
             status: 200,
@@ -88,7 +97,7 @@ const searchItemWithStock = async (req, res, next) => {
             INNER JOIN stock_master ON item_master.item_id = stock_master.item_id
             INNER JOIN  purchase_master ON stock_master.item_id = purchase_master.item_id 
             AND stock_master.uid = purchase_master.uid           
-            WHERE item_master.status = $1 AND stock_master.total_quantity_piece >= 0 AND lower(item_master.item_name) like $2`;
+            WHERE item_master.status = $1 AND stock_master.total_quantity_piece > 0 AND lower(item_master.item_name) like $2`;
 
             const { rows } = await db.query(q, [req.query.status || 1, `%${req.query.search.toLowerCase()}%`]);
             res.status(200).json(rows);
