@@ -11,6 +11,7 @@ const purchaseRoutes = require('./routes/purchase.routes');
 const saleRoutes = require('./routes/sale.routes')
 const relationsRoutes = require('./routes/relations.router')
 const authRoutes = require('./routes/auth.router');
+const reportsRoutes = require('./routes/reports.router');
 const { verifyToken } = require('./controllers/auth.controller');
 
 const app = express();
@@ -35,6 +36,7 @@ app.use(PREFIX + '/item', verifyToken, itemRoutes);
 app.use(PREFIX + '/purchase', verifyToken, purchaseRoutes);
 app.use(PREFIX + '/sale', verifyToken, saleRoutes);
 app.use(PREFIX + '/relations', verifyToken, relationsRoutes);
+app.use(PREFIX + '/reports', reportsRoutes);
 
 
 // anything else should be routed to angular

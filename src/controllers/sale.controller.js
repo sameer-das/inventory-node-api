@@ -239,8 +239,16 @@ const getNextBillNumber = async (req, res, next) => {
 }
 
 const getSales = async (req, res, next) => {
-    const query = `SELECT bill_no, sale_uid,sale_date,sale_customer,sale_customer_phone, 
-    sale_gstn,sale_customer, total_amount FROM sale_bill_details WHERE status = 1 order by created_on desc`;
+    console.log(req.query);
+    let query;
+    if (Object.keys(req.query).length === 0) {
+        query = `SELECT bill_no, sale_uid,sale_date,sale_customer,sale_customer_phone, 
+        sale_gstn,sale_customer, total_amount FROM sale_bill_details WHERE status = 1 order by created_on desc`;
+
+    } else {
+        query = `SELECT bill_no, sale_uid,sale_date,sale_customer,sale_customer_phone, 
+        sale_gstn,sale_customer, total_amount FROM sale_bill_details WHERE status = 1 order by created_on desc offset ${req.query.page - 1} limit ${req.query.pageSize}`;
+    }
     try {
         const { rows } = await db.query(query);
         res.status(200).json({
@@ -304,6 +312,11 @@ const getGstDetailsOfSale = async (req, res, next) => {
             message: e.message
         })
     }
+}
+
+
+const getSaleDetailsOfAnItem = async(req, res, next) =>{
+    
 }
 
 module.exports = {
