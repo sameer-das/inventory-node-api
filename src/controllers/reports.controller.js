@@ -50,7 +50,7 @@ const saleReport = async (req, res, next) => {
   const startDate = req.query.startDate;
   const endDate = req.query.endDate;
 
-  console.log(req.query);
+  // console.log(req.query);
 
   let _query = '';
   let query;
@@ -58,12 +58,12 @@ const saleReport = async (req, res, next) => {
     _query = `select bill_no,sale_uid,sale_date,sale_customer,sale_customer_phone,
       sale_gstn,total_amount,created_on from sale_bill_details where sale_date >= '%s' and sale_date <= '%s' order by created_on`
     query = format(_query, startDate, endDate)
-    console.log(query)
+    // console.log(query)
   } else if (reportType === 2) {
     _query = `select bill_no,sale_uid,sale_date,sale_customer,sale_customer_phone,
     sale_gstn,total_amount,created_on from sale_bill_details where sale_date >= '%s' and sale_date <= '%s' and sale_customer = '%s' order by created_on`
     query = format(_query, startDate, endDate, reportCustomerName)
-    console.log(query)
+    // console.log(query)
   } else if (reportType === 3) {
     _query = `select item_id,item_name,sale_master.bill_no, 
     sale_customer,sale_customer_phone,sale_gstn,
@@ -75,7 +75,7 @@ const saleReport = async (req, res, next) => {
     and sale_master.sale_uid = sale_bill_details.sale_uid
     where sale_master.sale_date >= '%s' and sale_master.sale_date <= '%s' and item_id =%s order by sale_master.created_on`
     query = format(_query, startDate, endDate, reportItemId)
-    console.log(query)
+    // console.log(query)
   }
 
 
@@ -102,28 +102,34 @@ const profitReport = async (req, res, next) => {
   const startDate = req.query.startDate;
   const endDate = req.query.endDate;
 
-  console.log(req.query);
+  // console.log(req.query);
 
   let _query = '';
   let query;
   if (reportType === 1) {
-    _query = `select sale_date::date, sum(profit_earned) as profit from sale_master
+    _query = `select sale_date::date, sum(total_amount) as sale, sum(profit_earned) as profit from sale_master
         where sale_date >= '%s' and sale_date <= '%s'
         group by  sale_date::date order by sale_date::date`
     query = format(_query, startDate, endDate)
-    console.log(query)
+    // console.log(query)
   } else if (reportType === 2) {
-    _query = `select sale_date::date, sum(profit_earned) as profit from sale_master
+    _query = `select sale_date::date,sum(total_amount) as sale, sum(profit_earned) as profit from sale_master
         where sale_date >= '%s' and sale_date <= '%s' and brand_id = %s
         group by  sale_date::date order by sale_date::date`
     query = format(_query, startDate, endDate, brandId)
-    console.log(query)
+    // console.log(query)
   } else if (reportType === 3) {
-    _query = `select brand_name, sum(profit_earned) as profit from sale_master
+    _query = `select brand_name,sum(total_amount) as sale, sum(profit_earned) as profit from sale_master
         where sale_date >= '%s' and sale_date <= '%s'  
         group by  brand_name order by brand_name`
     query = format(_query, startDate, endDate)
-    console.log(query)
+    // console.log(query)
+  } else if (reportType === 4) {
+    _query = `select item_name, sum(total_amount) as sale,	sum(profit_earned) as profit from sale_master
+        where sale_date >= '%s' and sale_date <= '%s'
+        group by  item_name order by profit desc`
+    query = format(_query, startDate, endDate)
+    // console.log(query)
   } 
 
 
