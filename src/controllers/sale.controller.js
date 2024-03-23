@@ -247,7 +247,7 @@ const getSales = async (req, res, next) => {
 
     } else {
         query = `SELECT bill_no, sale_uid,sale_date,sale_customer,sale_customer_phone, 
-        sale_gstn,sale_customer, total_amount FROM sale_bill_details WHERE status = 1 order by created_on desc offset ${req.query.page - 1} limit ${req.query.pageSize}`;
+        sale_gstn,sale_customer, total_amount, count(*) OVER() as total_count FROM sale_bill_details WHERE status = 1 order by created_on desc offset ${(req.query.page - 1) * req.query.pageSize} limit ${req.query.pageSize}`;
     }
     try {
         const { rows } = await db.query(query);

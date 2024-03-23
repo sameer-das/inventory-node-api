@@ -106,7 +106,7 @@ const getAllPurchases = async (req, res, next) => {
 
     } else {
         _query = `select sl_id,purchase_uid,purchase_date,biller_name,biller_phone,
-        biller_gstn, total_price, created_on, count(sl_id) as total_count from purchase_bill_details group by sl_id order by created_on desc offset ${req.query.page - 1} limit ${req.query.pageSize}`
+        biller_gstn, total_price, created_on, count(*) OVER() as total_count from purchase_bill_details order by created_on desc offset ${(req.query.page - 1) * req.query.pageSize} limit ${req.query.pageSize}`
     }
 
     try {
